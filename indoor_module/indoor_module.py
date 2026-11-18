@@ -35,6 +35,11 @@ class IndoorModule:
     - Connects to Wi-Fi
     - Connects to MQTT broker
     - Publishes readings to MQTT.
+
+    The LED:
+    - Blinks 2 times quickly on LoRa message receival
+    - Blinks 10 times quickly on a successful Wi-Fi connection
+    - Blinks 6 times slowly on a failed Wi-Fi connection
     """
     def __init__(self):
         # Initialize the LED.
@@ -158,17 +163,19 @@ class IndoorModule:
                 # A lost Wi-Fi link invalidates the MQTT session.
                 self.mqtt_connected = False
                 # Try to reconnect to Wi-Fi.
+                previous_attempt = self.wifi.wifi_last_attempt
                 self.wifi.connect()
 
                 # Indicate that Wi-Fi has been connected.
                 if self.wifi.isConnected():
                     self.wifi_has_connected = True
                     self.flashLed(10, 0.1)
-                else:
+                elif self.wifi.wifi_last_attempt != previous_attempt:
+                    # A cooldown skip leaves the attempt timestamp unchanged.
                     # Report an error if the Wi-Fi failed to connect.
                     if not self.wifi_has_connected:
                         self.errorHandler('wifi', 'raise', 'Wi-Fi connection failed.')
-                    self.flashLed(1, 1)
+                    self.flashLed(6, 0.4)
             else:
                 self.wifi_has_connected = True
 
