@@ -9,8 +9,18 @@ import sys
 import adafruit_rfm9x
 import adafruit_dht
 
-class LoRaSensor:
-    def __init__(self):
+class OutdoorModule:
+    """
+    Controls the outdoor module.
+
+    :param device_id: The device ID to use for LoRa messages.
+    This must match the device ID used in the indoor module.
+
+    The module:
+    - Reads outdoor DHT22 sensor
+    - Sends LoRa messages containing DHT22 readings.
+    """
+    def __init__(self, device_id):
         # Initialize the LED.
         self.led = digitalio.DigitalInOut(board.GP5)
         self.led.direction = digitalio.Direction.OUTPUT
@@ -46,10 +56,9 @@ class LoRaSensor:
             print('DHT22 sensor initialization failed:', error)
             self.flashOnFault()
 
-        self.device_id = 'lora_sensor_1'
-        self.sequence_number = 0
+        self.device_id = device_id
 
-    def flashLed(self,times, duration):
+    def flashLed(self, times, duration):
         """
         Flashes the LED a specified number of times.
 
@@ -90,12 +99,9 @@ class LoRaSensor:
             # Encode the sensor data as a JSON string.
             data = json.dumps({
                 'device_id': self.device_id,
-                'sequence': self.sequence_number,
                 'temperature': temperature,
                 'humidity': humidity,
             }, separators = (',', ':'))
-
-            self.sequence_number += 1
 
             # Transmit the measurement; indicate success or failure with the LED.
             try:

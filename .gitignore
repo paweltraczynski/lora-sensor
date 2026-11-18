@@ -2,7 +2,7 @@
 .idea/
 
 # Local config file.
-base_module/config_local.py
+indoor_module/config_local.py
 
 # Development directory.
 dev/
