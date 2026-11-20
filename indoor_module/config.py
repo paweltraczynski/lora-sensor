@@ -6,6 +6,7 @@ wifi_ssid = 'ssid'
 wifi_password = 'password'
 
 # MQTT configuration.
+# You can use, for example: https://www.emqx.com/en/cloud/serverless-mqtt
 mqtt_server = 'your.mqtt.server.com'
 mqtt_port = 8883
 mqtt_username = 'your_mqtt_username'
